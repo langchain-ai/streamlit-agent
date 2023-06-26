@@ -1,0 +1,46 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/python-3
+{
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.11-bullseye",
+    "customizations": {
+        "codespaces": {
+          "openFiles": [
+            "README.md",
+            "streamlit_agent/mrkl_demo.py"
+          ]
+        },
+        "vscode": {
+          "settings": {},
+          "extensions": [
+            "ms-python.python",
+            "ms-python.vscode-pylance"
+          ]
+        }
+      },
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        8501
+    ],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // Install app dependencies.
+    "postCreateCommand": "pip3 install --user .",
+    // Use 'postAttachCommand' to run commands after a tool has attached to the container.
+    // Start the app.
+    "postAttachCommand": {
+        "server": "streamlit run streamlit_agent/mrkl_demo.py --server.enableCORS false --server.enableXsrfProtection false"
+    },
+    "portsAttributes": {
+        "8501": {
+            "label": "Application",
+            "onAutoForward": "openPreview"
+        }
+    },
+    // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode",
+    "features": {
+        // Optional features for development - increase container boot time!
+        // "ghcr.io/devcontainers-contrib/features/coverage-py:2": {},
+        // "git": "latest",
+        // "github-cli": "latest"
+    }
+}
