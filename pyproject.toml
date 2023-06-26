@@ -2,7 +2,7 @@
 name = "streamlit-agent"
 version = "0.1.0"
 description = ""
-authors = ["Tim Conkling <tconkling@gmail.com>"]
+authors = ["Tim Conkling <tconkling@gmail.com>", "Joshua Carroll <joshua.carroll@snowflake.com>"]
 license = "Apache 2.0"
 readme = "README.md"
 packages = [{include = "streamlit_agent"}]
