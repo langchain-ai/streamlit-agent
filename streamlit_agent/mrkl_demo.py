@@ -2,6 +2,29 @@ from pathlib import Path
 
 import streamlit as st
 
+from langchain import (
+    LLMMathChain,
+    OpenAI,
+    SerpAPIWrapper,
+    SQLDatabase,
+    SQLDatabaseChain,
+)
+from langchain.agents import AgentType
+from langchain.agents import initialize_agent, Tool
+from langchain.callbacks import StreamlitCallbackHandler
+
+from callbacks.capturing_callback_handler import playback_callbacks
+from clear_results import with_clear_container
+
+DB_PATH = (Path(__file__).parent / "Chinook.db").absolute()
+
+SAVED_SESSIONS = {
+    "Who is Leo DiCaprio's girlfriend? What is her current age raised to the 0.43 power?": "leo.pickle",
+    "What is the full name of the artist who recently released an album called "
+    "'The Storm Before the Calm' and are they in the FooBar database? If so, what albums of theirs "
+    "are in the FooBar database?": "alanis.pickle",
+}
+
 st.set_page_config(page_title="MRKL", page_icon="🦜", layout="wide")
 
 "# 🦜🔗 MRKL"
@@ -35,55 +58,7 @@ else:
     serpapi_api_key = "not_supplied"
     enable_custom = False
 
-with st.expander("👉 View the source code"), st.echo():
-    # LangChain imports
-    from langchain import (
-        LLMMathChain,
-        OpenAI,
-        SerpAPIWrapper,
-        SQLDatabase,
-        SQLDatabaseChain,
-    )
-    from langchain.agents import AgentType
-    from langchain.agents import initialize_agent, Tool
-    from langchain.callbacks import StreamlitCallbackHandler
-
-    from callbacks.capturing_callback_handler import playback_callbacks
-
-    # Tools setup
-    DB_PATH = (Path(__file__).parent / "Chinook.db").absolute()
-
-    llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
-    search = SerpAPIWrapper(serpapi_api_key=serpapi_api_key)
-    llm_math_chain = LLMMathChain(llm=llm, verbose=True)
-    db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
-    db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
-    tools = [
-        Tool(
-            name="Search",
-            func=search.run,
-            description="useful for when you need to answer questions about current events. You should ask targeted questions",
-        ),
-        Tool(
-            name="Calculator",
-            func=llm_math_chain.run,
-            description="useful for when you need to answer questions about math",
-        ),
-        Tool(
-            name="FooBar DB",
-            func=db_chain.run,
-            description="useful for when you need to answer questions about FooBar. Input should be in the form of a question containing full context",
-        ),
-    ]
-
-    # Initialize agent
-    mrkl = initialize_agent(
-        tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
-    )
-    # To run the agent, use `mrkl.run(mrkl_input)`
-
-# More Streamlit here!
-
+# StreamlitCallbackHandler configuration
 expand_new_thoughts = st.sidebar.checkbox(
     "Expand New Thoughts",
     value=True,
@@ -103,13 +78,36 @@ max_thought_containers = st.sidebar.number_input(
     help="Max number of completed thoughts to show. When exceeded, older thoughts will be moved into a 'History' expander.",
 )
 
-SAVED_SESSIONS = {
-    "Who is Leo DiCaprio's girlfriend? What is her current age raised to the 0.43 power?": "leo.pickle",
-    "What is the full name of the artist who recently released an album called "
-    "'The Storm Before the Calm' and are they in the FooBar database? If so, what albums of theirs "
-    "are in the FooBar database?": "alanis.pickle",
-}
+# Tools setup
+llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
+search = SerpAPIWrapper(serpapi_api_key=serpapi_api_key)
+llm_math_chain = LLMMathChain(llm=llm, verbose=True)
+db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
+db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+tools = [
+    Tool(
+        name="Search",
+        func=search.run,
+        description="useful for when you need to answer questions about current events. You should ask targeted questions",
+    ),
+    Tool(
+        name="Calculator",
+        func=llm_math_chain.run,
+        description="useful for when you need to answer questions about math",
+    ),
+    Tool(
+        name="FooBar DB",
+        func=db_chain.run,
+        description="useful for when you need to answer questions about FooBar. Input should be in the form of a question containing full context",
+    ),
+]
 
+# Initialize agent
+mrkl = initialize_agent(
+    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+)
+
+# More Streamlit here!
 key = "input"
 shadow_key = "_input"
 
@@ -133,8 +131,6 @@ question_container = st.empty()
 results_container = st.empty()
 
 # A hack to "clear" the previous result when submitting a new prompt.
-from clear_results import with_clear_container
-
 if with_clear_container(submit_clicked):
     # Create our StreamlitCallbackHandler
     res = results_container.container()
