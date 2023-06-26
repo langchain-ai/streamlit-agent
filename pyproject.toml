@@ -18,6 +18,7 @@ google-search-results = "^2.4.2"
 [tool.poetry.group.dev.dependencies]
 black = "^23.3.0"
 mypy = "^1.4.1"
+pre-commit = "^3.3.3"
 
 [build-system]
 requires = ["poetry-core"]

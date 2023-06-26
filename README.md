@@ -6,7 +6,7 @@ Implementation of the LangChain ["Replicating MRKL" demo](https://python.langcha
 
 This project uses [Poetry](https://python-poetry.org/) for dependency management.
 
-```shell 
+```shell
 $ poetry install
 ```
 
