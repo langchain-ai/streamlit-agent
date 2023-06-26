@@ -13,8 +13,8 @@ from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 from langchain.callbacks import StreamlitCallbackHandler
 
-from callbacks.capturing_callback_handler import playback_callbacks
-from clear_results import with_clear_container
+from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
+from streamlit_agent.clear_results import with_clear_container
 
 DB_PATH = (Path(__file__).parent / "Chinook.db").absolute()
 
