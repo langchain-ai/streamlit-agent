@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "streamlit-agent"
+version = "0.1.0"
+description = ""
+authors = ["Tim Conkling <tconkling@gmail.com>"]
+license = "Apache 2.0"
+readme = "README.md"
+packages = [{include = "streamlit_agent"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+langchain = ">=0.0.211"
+streamlit = "^1.23.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
