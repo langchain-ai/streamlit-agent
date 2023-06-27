@@ -25,19 +25,9 @@ SAVED_SESSIONS = {
     "are in the FooBar database?": "alanis.pickle",
 }
 
-st.set_page_config(page_title="MRKL", page_icon="🦜", layout="wide")
+st.set_page_config(page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed")
 
 "# 🦜🔗 MRKL"
-
-"""
-This Streamlit app showcases a LangChain agent that replicates the
-[MRKL chain](https://arxiv.org/abs/2205.00445).
-
-This uses the [example Chinook database](https://github.com/lerocha/chinook-database).
-To set it up follow the instructions [here](https://database.guide/2-sample-databases-sqlite/),
-placing the .db file in the same directory as this app.
-
-"""
 
 # Setup credentials in Streamlit
 user_openai_api_key = st.sidebar.text_input(
@@ -57,26 +47,6 @@ else:
     openai_api_key = "not_supplied"
     serpapi_api_key = "not_supplied"
     enable_custom = False
-
-# StreamlitCallbackHandler configuration
-expand_new_thoughts = st.sidebar.checkbox(
-    "Expand New Thoughts",
-    value=True,
-    help="True if LLM thoughts should be expanded by default",
-)
-
-collapse_completed_thoughts = st.sidebar.checkbox(
-    "Collapse Completed Thoughts",
-    value=True,
-    help="True if LLM thoughts should be collapsed when they complete",
-)
-
-max_thought_containers = st.sidebar.number_input(
-    "Max Thought Containers",
-    value=4,
-    min_value=1,
-    help="Max number of completed thoughts to show. When exceeded, older thoughts will be moved into a 'History' expander.",
-)
 
 # Tools setup
 llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
@@ -107,12 +77,14 @@ mrkl = initialize_agent(
     tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
 
-# More Streamlit here!
-key = "input"
-shadow_key = "_input"
+if "latest_user_input" not in st.session_state:
+    st.session_state["latest_user_input"] = ""
 
-if key in st.session_state and shadow_key not in st.session_state:
-    st.session_state[shadow_key] = st.session_state[key]
+if "latest_user_input_executed" not in st.session_state:
+    st.session_state["latest_user_input_executed"] = False
+
+if "dirty_state" not in st.session_state:
+    st.session_state["dirty_state"] = "initial"
 
 with st.form(key="form"):
     if not enable_custom:
@@ -121,38 +93,43 @@ with st.form(key="form"):
     mrkl_input = ""
 
     if enable_custom:
-        mrkl_input = st.text_input("Or, ask your own question", key=shadow_key)
-        st.session_state[key] = mrkl_input
+        user_input = st.text_input("Or, ask your own question")
     if not mrkl_input:
-        mrkl_input = prefilled
+        user_input = prefilled
     submit_clicked = st.form_submit_button("Submit Question")
 
-# A hack to "clear" the previous result when submitting a new prompt.
-if with_clear_container(submit_clicked):
-    question_container = st.empty()
-    results_container = st.empty()
+if submit_clicked:
+    st.session_state["latest_user_input"] = user_input
+    st.session_state["latest_user_input_executed"] = False
 
-    # Create our StreamlitCallbackHandler
-    res = results_container.container()
-    streamlit_handler = StreamlitCallbackHandler(
-        parent_container=res,
-        max_thought_containers=int(max_thought_containers),
-        expand_new_thoughts=expand_new_thoughts,
-        collapse_completed_thoughts=collapse_completed_thoughts,
-    )
+if st.session_state["dirty_state"] == "dirty":
+    st.session_state["dirty_state"] = "initial"
+    for i in range(10):
+        st.empty()
+    st.experimental_rerun()
 
-    question_container.write(f"**Question:** {mrkl_input}")
+if not st.session_state["latest_user_input_executed"] and st.session_state["dirty_state"] == "initial":
+    if st.session_state["latest_user_input"]:
+        st.chat_message("user").write(st.session_state["latest_user_input"])
 
-    # If we've saved this question, play it back instead of actually running LangChain
-    # (so that we don't exhaust our API calls unnecessarily)
-    if mrkl_input in SAVED_SESSIONS:
-        session_name = SAVED_SESSIONS[mrkl_input]
-        session_path = Path(__file__).parent / "runs" / session_name
-        print(f"Playing saved session: {session_path}")
-        answer = playback_callbacks(
-            [streamlit_handler], str(session_path), max_pause_time=3
-        )
-        res.write(f"**Answer:** {answer}")
-    else:
-        answer = mrkl.run(mrkl_input, callbacks=[streamlit_handler])
-        res.write(f"**Answer:** {answer}")
+        result_container = st.chat_message("assistant", avatar="🦜")
+        st_callback = StreamlitCallbackHandler(result_container)
+
+        # If we've saved this question, play it back instead of actually running LangChain
+        # (so that we don't exhaust our API calls unnecessarily)
+        if st.session_state["latest_user_input"] in SAVED_SESSIONS:
+            session_name = SAVED_SESSIONS[st.session_state["latest_user_input"]]
+            session_path = Path(__file__).parent / "runs" / session_name
+            print(f"Playing saved session: {session_path}")
+            answer = playback_callbacks(
+                [st_callback], str(session_path), max_pause_time=3
+            )
+        else:
+            answer = mrkl.run(st.session_state["latest_user_input"], callbacks=[st_callback])
+
+        result_container.write(answer)
+        st.session_state["dirty_state"] = "dirty"
+        st.session_state["latest_user_input_executed"] = True
+
+for i in range(10):
+    st.empty()

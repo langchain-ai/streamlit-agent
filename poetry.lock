@@ -708,13 +708,13 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 
 [[package]]
 name = "langchain"
-version = "0.0.215"
+version = "0.0.216"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = ">=3.8.1,<4.0"
 files = [
-    {file = "langchain-0.0.215-py3-none-any.whl", hash = "sha256:af9587c2eb317a6e33123f8a4ee8ccd8685cfab62359ea4fec52c962d9646acf"},
-    {file = "langchain-0.0.215.tar.gz", hash = "sha256:a6b261f3be941eeac2d9b37fbf8996fa4279ef724f064e8c90813046126da85b"},
+    {file = "langchain-0.0.216-py3-none-any.whl", hash = "sha256:6624582b445cb24f486ee9032dc58136aa1e5862ec7287e43739e930168aaa22"},
+    {file = "langchain-0.0.216.tar.gz", hash = "sha256:3b3d8fe1ad951191ba183dda996601d199e09eab859979a6a0defde8f11cac4a"},
 ]
 
 [package.dependencies]
@@ -1787,14 +1787,14 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
-name = "streamlit"
-version = "1.23.1"
+name = "streamlit-nightly"
+version = "1.23.2.dev20230625"
 description = "A faster way to build and share data apps"
 optional = false
-python-versions = ">=3.7, !=3.9.7"
+python-versions = ">=3.8, !=3.9.7"
 files = [
-    {file = "streamlit-1.23.1-py2.py3-none-any.whl", hash = "sha256:02cd55a95acd20d73ff03866956ba6e98d71041ee4728dbfef05cf17069d1bb9"},
-    {file = "streamlit-1.23.1.tar.gz", hash = "sha256:af95a78f9d291f12f779cf66a2bdadfafd8a46fe4fcc6ed281492640ed37bf1e"},
+    {file = "streamlit-nightly-1.23.2.dev20230625.tar.gz", hash = "sha256:7b15fb97da58c48f93714d5b3fcc541d71a44f4a4dd61f9ede7d285a02c61981"},
+    {file = "streamlit_nightly-1.23.2.dev20230625-py2.py3-none-any.whl", hash = "sha256:37e2eeeb806bce83d1560293c0aba41a955bb8e462c2973e2e8329d456521a73"},
 ]
 
 [package.dependencies]
@@ -2154,4 +2154,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "24c83f380b4486e4cb18b780624239c212b4d1f646d005c809c4f39d1a9cacf2"
+content-hash = "218dd076d36d656366b1949cc211069192d670334f983d242716109d1232131a"
