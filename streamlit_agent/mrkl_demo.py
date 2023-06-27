@@ -2,15 +2,12 @@ from pathlib import Path
 
 import streamlit as st
 
-from langchain import (
-    LLMMathChain,
-    OpenAI,
-    SQLDatabase,
-    SQLDatabaseChain,
-)
+from langchain import SQLDatabase
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 from langchain.callbacks import StreamlitCallbackHandler
+from langchain.chains import LLMMathChain, SQLDatabaseChain
+from langchain.llms import OpenAI
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
@@ -46,9 +43,9 @@ else:
 # Tools setup
 llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
 search = DuckDuckGoSearchAPIWrapper()
-llm_math_chain = LLMMathChain(llm=llm, verbose=True)
+llm_math_chain = LLMMathChain.from_llm(llm)
 db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
-db_chain = SQLDatabaseChain.from_llm(llm, db, verbose=True)
+db_chain = SQLDatabaseChain.from_llm(llm, db)
 tools = [
     Tool(
         name="Search",
