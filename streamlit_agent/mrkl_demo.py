@@ -74,7 +74,7 @@ mrkl = initialize_agent(
 
 with st.form(key="form"):
     if not enable_custom:
-        "Ask one of the sample questions, or enter your API Keys in the sidebar to ask your own custom questions."
+        "Ask one of the sample questions, or enter your API Key in the sidebar to ask your own custom questions."
     prefilled = st.selectbox("Sample questions", sorted(SAVED_SESSIONS.keys())) or ""
     mrkl_input = ""
 
@@ -98,9 +98,7 @@ if with_clear_container(submit_clicked):
         session_name = SAVED_SESSIONS[user_input]
         session_path = Path(__file__).parent / "runs" / session_name
         print(f"Playing saved session: {session_path}")
-        answer = playback_callbacks(
-            [st_callback], str(session_path), max_pause_time=0.1
-        )
+        answer = playback_callbacks([st_callback], str(session_path), max_pause_time=2)
     else:
         answer = mrkl.run(user_input, callbacks=[st_callback])
 
