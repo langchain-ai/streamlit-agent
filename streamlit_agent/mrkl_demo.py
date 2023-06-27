@@ -14,7 +14,6 @@ from langchain.callbacks import StreamlitCallbackHandler
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
-from streamlit_agent.clear_results import with_clear_container
 
 DB_PATH = (Path(__file__).parent / "Chinook.db").absolute()
 
@@ -25,7 +24,9 @@ SAVED_SESSIONS = {
     "are in the FooBar database?": "alanis.pickle",
 }
 
-st.set_page_config(page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed"
+)
 
 "# 🦜🔗 MRKL"
 
@@ -101,7 +102,10 @@ if st.session_state["dirty_state"] == "dirty":
         st.empty()
     st.experimental_rerun()
 
-if not st.session_state["latest_user_input_executed"] and st.session_state["dirty_state"] == "initial":
+if (
+    not st.session_state["latest_user_input_executed"]
+    and st.session_state["dirty_state"] == "initial"
+):
     if st.session_state["latest_user_input"]:
         st.chat_message("user").write(st.session_state["latest_user_input"])
 
@@ -118,7 +122,9 @@ if not st.session_state["latest_user_input_executed"] and st.session_state["dirt
                 [st_callback], str(session_path), max_pause_time=3
             )
         else:
-            answer = mrkl.run(st.session_state["latest_user_input"], callbacks=[st_callback])
+            answer = mrkl.run(
+                st.session_state["latest_user_input"], callbacks=[st_callback]
+            )
 
         result_container.write(answer)
         st.session_state["dirty_state"] = "dirty"
