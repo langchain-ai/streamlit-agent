@@ -84,12 +84,12 @@ with st.form(key="form"):
         user_input = prefilled
     submit_clicked = st.form_submit_button("Submit Question")
 
-question_container = st.empty()
-results_container = st.empty()
+output_container = st.empty()
 if with_clear_container(submit_clicked):
-    question_container.chat_message("user").write(user_input)
+    output_container = output_container.container()
+    output_container.chat_message("user").write(user_input)
 
-    answer_container = results_container.chat_message("assistant", avatar="🦜")
+    answer_container = output_container.chat_message("assistant", avatar="🦜")
     st_callback = StreamlitCallbackHandler(answer_container)
 
     # If we've saved this question, play it back instead of actually running LangChain
