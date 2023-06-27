@@ -25,7 +25,9 @@ SAVED_SESSIONS = {
     "are in the FooBar database?": "alanis.pickle",
 }
 
-st.set_page_config(page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(
+    page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed"
+)
 
 "# 🦜🔗 MRKL"
 
@@ -70,15 +72,6 @@ mrkl = initialize_agent(
     tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
 
-if "latest_user_input" not in st.session_state:
-    st.session_state["latest_user_input"] = ""
-
-if "latest_user_input_executed" not in st.session_state:
-    st.session_state["latest_user_input_executed"] = False
-
-if "dirty_state" not in st.session_state:
-    st.session_state["dirty_state"] = "initial"
-
 with st.form(key="form"):
     if not enable_custom:
         "Ask one of the sample questions, or enter your API Keys in the sidebar to ask your own custom questions."
@@ -91,38 +84,24 @@ with st.form(key="form"):
         user_input = prefilled
     submit_clicked = st.form_submit_button("Submit Question")
 
-if submit_clicked:
-    st.session_state["latest_user_input"] = user_input
-    st.session_state["latest_user_input_executed"] = False
+question_container = st.empty()
+results_container = st.empty()
+if with_clear_container(submit_clicked):
+    question_container.chat_message("user").write(user_input)
 
-if st.session_state["dirty_state"] == "dirty":
-    st.session_state["dirty_state"] = "initial"
-    for i in range(10):
-        st.empty()
-    st.experimental_rerun()
+    answer_container = results_container.chat_message("assistant", avatar="🦜")
+    st_callback = StreamlitCallbackHandler(answer_container)
 
-if not st.session_state["latest_user_input_executed"] and st.session_state["dirty_state"] == "initial":
-    if st.session_state["latest_user_input"]:
-        st.chat_message("user").write(st.session_state["latest_user_input"])
+    # If we've saved this question, play it back instead of actually running LangChain
+    # (so that we don't exhaust our API calls unnecessarily)
+    if user_input in SAVED_SESSIONS:
+        session_name = SAVED_SESSIONS[user_input]
+        session_path = Path(__file__).parent / "runs" / session_name
+        print(f"Playing saved session: {session_path}")
+        answer = playback_callbacks(
+            [st_callback], str(session_path), max_pause_time=0.1
+        )
+    else:
+        answer = mrkl.run(user_input, callbacks=[st_callback])
 
-        result_container = st.chat_message("assistant", avatar="🦜")
-        st_callback = StreamlitCallbackHandler(result_container)
-
-        # If we've saved this question, play it back instead of actually running LangChain
-        # (so that we don't exhaust our API calls unnecessarily)
-        if st.session_state["latest_user_input"] in SAVED_SESSIONS:
-            session_name = SAVED_SESSIONS[st.session_state["latest_user_input"]]
-            session_path = Path(__file__).parent / "runs" / session_name
-            print(f"Playing saved session: {session_path}")
-            answer = playback_callbacks(
-                [st_callback], str(session_path), max_pause_time=3
-            )
-        else:
-            answer = mrkl.run(st.session_state["latest_user_input"], callbacks=[st_callback])
-
-        result_container.write(answer)
-        st.session_state["dirty_state"] = "dirty"
-        st.session_state["latest_user_input_executed"] = True
-
-for i in range(10):
-    st.empty()
+    answer_container.write(answer)
