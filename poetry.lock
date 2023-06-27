@@ -1048,13 +1048,13 @@ format-nongpl = ["fqdn", "idna", "isoduration", "jsonpointer (>1.13)", "rfc3339-
 
 [[package]]
 name = "langchain"
-version = "0.0.216"
+version = "0.0.217"
 description = "Building applications with LLMs through composability"
 optional = false
 python-versions = ">=3.8.1,<4.0"
 files = [
-    {file = "langchain-0.0.216-py3-none-any.whl", hash = "sha256:6624582b445cb24f486ee9032dc58136aa1e5862ec7287e43739e930168aaa22"},
-    {file = "langchain-0.0.216.tar.gz", hash = "sha256:3b3d8fe1ad951191ba183dda996601d199e09eab859979a6a0defde8f11cac4a"},
+    {file = "langchain-0.0.217-py3-none-any.whl", hash = "sha256:86ee1f8973a4c48da4e530d582568d152129d51ea63f0af7b5538bb50b7bb15b"},
+    {file = "langchain-0.0.217.tar.gz", hash = "sha256:9ca7be3d50ef291b023aae85090077ff3d30b483677cd870c53d3ea521b2603e"},
 ]
 
 [package.dependencies]
@@ -2252,14 +2252,14 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
-name = "streamlit-nightly"
-version = "1.24.1.dev20230626"
+name = "streamlit"
+version = "1.24.0"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = ">=3.8, !=3.9.7"
 files = [
-    {file = "streamlit-nightly-1.24.1.dev20230626.tar.gz", hash = "sha256:9e734758cc0cd5b38e3fbdb3eea27b4eb6a741cae92a8c6ba18cc1ed08a8cc18"},
-    {file = "streamlit_nightly-1.24.1.dev20230626-py2.py3-none-any.whl", hash = "sha256:1d471d07361917f7e0c778a59b2f73a35b0c5eac8d2060caa112d30dda9205e0"},
+    {file = "streamlit-1.24.0-py2.py3-none-any.whl", hash = "sha256:102b07d196650f8f35841e35381427cdfcf98b3767c57b28a99af5a8bf22e8b1"},
+    {file = "streamlit-1.24.0.tar.gz", hash = "sha256:3525face94c78792733c56d63a36b48845150e3ba67bb50a19adb4c5975a8225"},
 ]
 
 [package.dependencies]
@@ -2267,26 +2267,26 @@ altair = ">=4.0,<6"
 blinker = ">=1.0.0,<2"
 cachetools = ">=4.0,<6"
 click = ">=7.0,<9"
-gitpython = ">=3.0.7,<3.1.19 || >3.1.19,<4"
+gitpython = ">=3,<3.1.19 || >3.1.19,<4"
 importlib-metadata = ">=1.4,<7"
-numpy = ">=1.19.3,<2"
-packaging = ">=16.8,<24"
-pandas = ">=1.3.0,<3"
-pillow = ">=7.1.0,<10"
+numpy = ">=1,<2"
+packaging = ">=14.1,<24"
+pandas = ">=0.25,<3"
+pillow = ">=6.2.0,<10"
 protobuf = ">=3.20,<5"
-pyarrow = ">=6.0"
-pydeck = ">=0.8,<1"
+pyarrow = ">=4.0"
+pydeck = ">=0.1.dev5,<1"
 pympler = ">=0.9,<2"
-python-dateutil = ">=2.7.3,<3"
-requests = ">=2.18,<3"
-rich = ">=10.14.0,<14"
+python-dateutil = ">=2,<3"
+requests = ">=2.4,<3"
+rich = ">=10.11.0,<14"
 tenacity = ">=8.0.0,<9"
-toml = ">=0.10.1,<2"
+toml = "<2"
 tornado = ">=6.0.3,<7"
-typing-extensions = ">=4.1.0,<5"
+typing-extensions = ">=4.0.1,<5"
 tzlocal = ">=1.1,<5"
 validators = ">=0.2,<1"
-watchdog = {version = ">=2.1.5", markers = "platform_system != \"Darwin\""}
+watchdog = {version = "*", markers = "platform_system != \"Darwin\""}
 
 [package.extras]
 snowflake = ["snowflake-snowpark-python"]
@@ -2619,4 +2619,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c72d6670b75798986723d37e72eef37a602bb47f3239e05e217a2db40ae67358"
+content-hash = "a3a2f92d426bc09ecc59f3f8e59558eb1a5a88f6df1fe134c1cb5153e21f755f"

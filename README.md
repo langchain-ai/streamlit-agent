@@ -2,15 +2,13 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/langchain-ai/streamlit-agent?quickstart=1)
 
-Implementation of various LangChain agents as Streamlit apps including:
+This repository contains reference implementations of various LangChain agents as Streamlit apps including:
 
-- ["Replicating MRKL" demo](https://python.langchain.com/docs/modules/agents/how_to/mrkl)
+- `mrkl_demo.py`: An agent that replicates the [MRKL demo](https://python.langchain.com/docs/modules/agents/how_to/mrkl)
+- `minimal_agent.py`: A minimal agent with search (requires setting `OPENAI_API_KEY` env to run).
 
-**To be added:**
-
-- [ ] Minimal search agent with chat history
-- [ ] Chat QA over docs
-- [ ] SQL agent
+Apps feature LangChain 🤝 Streamlit integrations such as the
+[Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit).
 
 ## Setup
 
@@ -29,4 +27,13 @@ $ pre-commit install
 
 ```shell
 $ streamlit run streamlit_agent/mrkl_demo.py
+$ streamlit run streamlit_agent/minimal_agent.py
 ```
+
+## Contributing
+
+We plan to add more agent examples over time - PRs welcome
+
+- [ ] Minimal search agent with chat history
+- [ ] Chat QA over docs
+- [ ] SQL agent
