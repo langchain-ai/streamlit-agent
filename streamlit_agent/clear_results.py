@@ -17,7 +17,7 @@ def set_dirty_state(state: str) -> None:
     st.session_state["dirty_state"] = state
 
 
-def with_clear_container(submit_clicked):
+def with_clear_container(submit_clicked: bool) -> bool:
     if get_dirty_state() == DirtyState.DIRTY:
         if submit_clicked:
             set_dirty_state(DirtyState.UNHANDLED_SUBMIT)
