@@ -14,3 +14,4 @@ repos:
           # pre-commit's default_language_version, see
           # https://pre-commit.com/#top_level-default_language_version
           language_version: python3.11
+          args: ["--line-length", "100"]
