@@ -32,9 +32,7 @@ if prompt := st.chat_input():
         st.stop()
 
     with st.chat_message("assistant"):
-        container = st.empty()
-        stream_handler = StreamHandler(container)
+        stream_handler = StreamHandler(st.empty())
         llm = ChatOpenAI(openai_api_key=openai_api_key, streaming=True, callbacks=[stream_handler])
         response = llm(st.session_state.messages)
         st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))
-        container.markdown(response.content)
