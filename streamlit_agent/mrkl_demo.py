@@ -65,19 +65,17 @@ tools = [
 ]
 
 # Initialize agent
-mrkl = initialize_agent(
-    tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
-)
+mrkl = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
 
 with st.form(key="form"):
     if not enable_custom:
         "Ask one of the sample questions, or enter your API Key in the sidebar to ask your own custom questions."
     prefilled = st.selectbox("Sample questions", sorted(SAVED_SESSIONS.keys())) or ""
-    mrkl_input = ""
+    user_input = ""
 
     if enable_custom:
         user_input = st.text_input("Or, ask your own question")
-    if not mrkl_input:
+    if not user_input:
         user_input = prefilled
     submit_clicked = st.form_submit_button("Submit Question")
 
