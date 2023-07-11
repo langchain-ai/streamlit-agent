@@ -10,9 +10,9 @@ packages = [{include = "streamlit_agent"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 langchain = ">=0.0.216"
-streamlit = ">=1.24.0"
 openai = "^0.27.8"
 duckduckgo-search = "^3.8.3"
+streamlit-nightly = ">=1.24.2.dev20230710"
 
 
 [tool.poetry.group.dev.dependencies]
