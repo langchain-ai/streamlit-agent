@@ -9,10 +9,12 @@ packages = [{include = "streamlit_agent"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-langchain = ">=0.0.216"
+langchain = {extras = ["docarray"], version = "^0.0.234"}
 openai = "^0.27.8"
 duckduckgo-search = "^3.8.3"
 streamlit = {path = "streamlit-1.24.1-py2.py3-none-any.whl"}
+pypdf = "^3.12.2"
+sentence-transformers = "^2.2.2"
 
 
 [tool.poetry.group.dev.dependencies]

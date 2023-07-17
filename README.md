@@ -8,6 +8,7 @@ This repository contains reference implementations of various LangChain agents a
 - `mrkl_demo.py`: An agent that replicates the [MRKL demo](https://python.langchain.com/docs/modules/agents/how_to/mrkl) ([View the app](https://langchain-mrkl.streamlit.app))
 - `minimal_agent.py`: A minimal agent with search (requires setting `OPENAI_API_KEY` env to run)
 - `search_and_chat.py`: A search-enabled chatbot that remembers chat history ([View the app](https://langchain-chat-search.streamlit.app/))
+- `chat_with_documents.py`: Chatbot capable of answering queries by referring custom documents
 
 Apps feature LangChain 🤝 Streamlit integrations such as the
 [Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit).
@@ -36,5 +37,4 @@ $ streamlit run streamlit_agent/mrkl_demo.py
 
 We plan to add more agent examples over time - PRs welcome
 
-- [ ] Chat QA over docs
 - [ ] SQL agent
