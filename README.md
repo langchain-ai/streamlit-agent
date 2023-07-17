@@ -37,5 +37,4 @@ $ streamlit run streamlit_agent/mrkl_demo.py
 
 We plan to add more agent examples over time - PRs welcome
 
-- [x] Chat QA over docs
 - [ ] SQL agent
