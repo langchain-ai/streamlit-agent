@@ -14,7 +14,7 @@ st.set_page_config(page_title="LangChain: Chat with Documents", page_icon="🦜"
 st.title("🦜 LangChain: Chat with Documents")
 
 
-@st.cache_resource
+@st.cache_resource(ttl="1h")
 def configure_qa_chain(uploaded_files):
     # Read documents
     docs = []
