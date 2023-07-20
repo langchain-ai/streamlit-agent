@@ -36,6 +36,7 @@ file_formats = {
     "xml": pd.read_xml,
 }
 
+
 def clear_submit():
     """
     Clear the Submit Button State
@@ -44,27 +45,29 @@ def clear_submit():
     """
     st.session_state["submit"] = False
 
-@st.cache_data
+
+@st.cache_data(ttl="2h")
 def load_data(uploaded_file):
     try:
         ext = os.path.splitext(uploaded_file.name)[1][1:].lower()
     except:
-        ext = uploaded_file.split('.')[-1]
+        ext = uploaded_file.split(".")[-1]
     if ext in file_formats:
         return file_formats[ext](uploaded_file)
     else:
         st.error(f"Unsupported file format: {ext}")
         return None
 
+
 st.set_page_config(page_title="LangChain: Chat with Pandas DataFrame", page_icon="🦜")
 st.title("🦜 LangChain: Chat with Pandas DataFrame")
 
 uploaded_file = st.file_uploader(
-                "Upload a Data file",
-                type=list(file_formats.keys()),
-                help="Various File formats are Support",
-                on_change=clear_submit,
-            )
+    "Upload a Data file",
+    type=list(file_formats.keys()),
+    help="Various File formats are Support",
+    on_change=clear_submit,
+)
 
 if uploaded_file:
     df = load_data(uploaded_file)
@@ -84,13 +87,13 @@ if prompt := st.chat_input(placeholder="What is this Data About?"):
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
 
-    llm = ChatOpenAI(temperature = 0, model="gpt-3.5-turbo-0613", openai_api_key=openai_api_key, streaming=True)
+    llm = ChatOpenAI(
+        temperature=0, model="gpt-3.5-turbo-0613", openai_api_key=openai_api_key, streaming=True
+    )
 
-    pandas_df_agent = create_pandas_dataframe_agent(llm, 
-                                        df,
-                                        verbose=True,
-                                         agent_type=AgentType.OPENAI_FUNCTIONS)
-
+    pandas_df_agent = create_pandas_dataframe_agent(
+        llm, df, verbose=True, agent_type=AgentType.OPENAI_FUNCTIONS
+    )
 
     with st.chat_message("assistant"):
         st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
