@@ -73,13 +73,13 @@ if uploaded_file:
     df = load_data(uploaded_file)
 
 openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-if "messages" not in st.session_state:
+if "messages" not in st.session_state or st.sidebar.button("Clear conversation history"):
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-if prompt := st.chat_input(placeholder="What is this Data About?"):
+if prompt := st.chat_input(placeholder="What is this data about?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
@@ -92,7 +92,11 @@ if prompt := st.chat_input(placeholder="What is this Data About?"):
     )
 
     pandas_df_agent = create_pandas_dataframe_agent(
-        llm, df, verbose=True, agent_type=AgentType.OPENAI_FUNCTIONS
+        llm,
+        df,
+        verbose=True,
+        agent_type=AgentType.OPENAI_FUNCTIONS,
+        handle_parsing_errors=True,
     )
 
     with st.chat_message("assistant"):
