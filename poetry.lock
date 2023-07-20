@@ -3145,12 +3145,13 @@ sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
 name = "streamlit"
-version = "1.24.1"
+version = "1.25.0"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = ">=3.8, !=3.9.7"
 files = [
-    {file = "streamlit-1.24.1-py2.py3-none-any.whl", hash = "sha256:6caa9d1571e48ae3942f7a7a7661df363a0885175168c9ad2e62215194e18181"},
+    {file = "streamlit-1.25.0-py2.py3-none-any.whl", hash = "sha256:3c561dca1b5430e73b7f2d66bff1d26103936bb4223912ab563ffee881fccc30"},
+    {file = "streamlit-1.25.0.tar.gz", hash = "sha256:8a7c93bee8703869045804afe22e9373c4e974fdb2a3e9abe3b027df3de03119"},
 ]
 
 [package.dependencies]
@@ -3181,10 +3182,6 @@ watchdog = {version = ">=2.1.5", markers = "platform_system != \"Darwin\""}
 
 [package.extras]
 snowflake = ["snowflake-snowpark-python"]
-
-[package.source]
-type = "file"
-url = "streamlit-1.24.1-py2.py3-none-any.whl"
 
 [[package]]
 name = "sympy"
@@ -3856,4 +3853,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "448bc56b3e5e178121f8938b679b04c3ad3fadcc84770e6bcffa9583f5a40d94"
+content-hash = "dfae9493fa40f783e1d68bab86183e8be896459dc0057d7f3a290a2aeb4e8d7b"
