@@ -37,6 +37,4 @@ $ streamlit run streamlit_agent/mrkl_demo.py
 
 ## Contributing
 
-We plan to add more agent examples over time - PRs welcome
-
-- [ ] SQL agent
+We plan to add more agent and chain examples over time and improve the existing ones - PRs welcome! 🚀
