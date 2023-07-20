@@ -10,11 +10,10 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 st.set_page_config(page_title="LangChain: Chat with SQL DB", page_icon="🦜")
 st.title("🦜 LangChain: Chat with SQL DB")
 
-@st.cache_resource
+
+@st.cache_resource(ttl="2h")
 def configure_sql_agent(db_uri):
-    llm = OpenAI(
-        openai_api_key=openai_api_key, temperature=0, streaming=True
-    )
+    llm = OpenAI(openai_api_key=openai_api_key, temperature=0, streaming=True)
 
     db = SQLDatabase.from_uri(
         database_uri=db_uri,
@@ -30,16 +29,13 @@ def configure_sql_agent(db_uri):
     )
     return agent
 
+
 # User inputs
-radio_opt = ['Use sample database - Chinook.db','Connect to your SQL database']
-selected_opt = st.sidebar.radio(
-    label='Choose suitable option',
-    options=radio_opt
-)
+radio_opt = ["Use sample database - Chinook.db", "Connect to your SQL database"]
+selected_opt = st.sidebar.radio(label="Choose suitable option", options=radio_opt)
 if radio_opt.index(selected_opt) == 1:
     db_uri = st.sidebar.text_input(
-        label='Database URI',
-        placeholder='mysql://user:pass@hostname:port/db'
+        label="Database URI", placeholder="mysql://user:pass@hostname:port/db"
     )
 else:
     db_filepath = (Path(__file__).parent / "Chinook.db").absolute()
@@ -48,7 +44,7 @@ else:
 openai_api_key = st.sidebar.text_input(
     label="OpenAI API Key",
     type="password",
-    value=st.session_state['openai_api_key'] if 'openai_api_key' in st.session_state else ''
+    value=st.session_state["openai_api_key"] if "openai_api_key" in st.session_state else "",
 )
 
 # Check user inputs
@@ -60,7 +56,7 @@ if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.")
     st.stop()
 else:
-    st.session_state['openai_api_key'] = openai_api_key
+    st.session_state["openai_api_key"] = openai_api_key
 
 
 # Setup agent
