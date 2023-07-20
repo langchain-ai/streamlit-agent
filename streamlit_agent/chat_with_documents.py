@@ -49,6 +49,7 @@ def configure_qa_chain(uploaded_files):
     )
     return qa_chain
 
+
 class StreamHandler(BaseCallbackHandler):
     def __init__(self, container: st.delta_generator.DeltaGenerator, initial_text: str = ""):
         self.container = container
@@ -57,6 +58,7 @@ class StreamHandler(BaseCallbackHandler):
     def on_llm_new_token(self, token: str, **kwargs) -> None:
         self.text += token
         self.container.markdown(self.text)
+
 
 class PrintRetrievalHandler(BaseCallbackHandler):
     def __init__(self, container):
@@ -100,7 +102,7 @@ if user_query:
     st.chat_message("user").write(user_query)
 
     with st.chat_message("assistant"):
-        stream_handler = StreamHandler(st.empty())
         retrieval_handler = PrintRetrievalHandler(st.container())
+        stream_handler = StreamHandler(st.empty())
         response = qa_chain.run(user_query, callbacks=[retrieval_handler, stream_handler])
         st.session_state.messages.append({"role": "assistant", "content": response})
