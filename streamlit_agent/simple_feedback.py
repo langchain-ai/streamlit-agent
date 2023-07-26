@@ -1,23 +1,22 @@
-import os
-
-os.environ["LANGCHAIN_TRACING_V2"] = "true"
-
 from langchain.agents import ConversationalChatAgent, AgentExecutor
-from langchain.callbacks import StreamlitCallbackHandler
+from langchain.callbacks import StreamlitCallbackHandler, LangChainTracer
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from langchain.tools import DuckDuckGoSearchRun
+from langsmith import Client
 import streamlit as st
 
-st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
-st.title("🦜 LangChain: Chat with search")
+st.set_page_config(page_title="LangChain: Simple feedback", page_icon="🦜")
+st.title("🦜 LangChain: Simple feedback")
 
 openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
 langsmith_api_key = st.sidebar.text_input("LangSmith API Key", type="password")
-
+ls_tracer = None
 if langsmith_api_key:
+    project = st.sidebar.text_input("LangSmith Project", value="default")
     ls_client = Client(api_url="https://api.smith.langchain.com", api_key=langsmith_api_key)
+    ls_tracer = LangChainTracer(project_name=project, client=ls_client)
 
 msgs = StreamlitChatMessageHistory()
 memory = ConversationBufferMemory(
@@ -64,7 +63,10 @@ def render_message(text, meta):
         url.markdown(f"""[View run in LangSmith]({run_url})""")
 
 
-for idx, msg in enumerate(msgs.messages):
+if "messages" not in st.session_state or st.sidebar.button("Reset conversation history"):
+    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
+
+for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         render_message(msg.content, st.session_state.steps.get(str(idx), {}))
 
@@ -86,8 +88,10 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
         handle_parsing_errors=True,
     )
     with st.chat_message("assistant"):
-        st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-        response = executor(prompt, callbacks=[st_cb], include_run_info=True)
+        callbacks = [StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)]
+        if ls_tracer:
+                    callbacks.append(ls_tracer)
+        response = executor(prompt, callbacks=callbacks, include_run_info=True)
         st.write(response["output"])
         response_meta = {"intermediate_steps": response["intermediate_steps"]}
         if langsmith_api_key:
