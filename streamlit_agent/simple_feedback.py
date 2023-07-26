@@ -1,3 +1,7 @@
+import os
+
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+
 from langchain.agents import ConversationalChatAgent, AgentExecutor
 from langchain.callbacks import StreamlitCallbackHandler
 from langchain.chat_models import ChatOpenAI
@@ -10,6 +14,10 @@ st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
 st.title("🦜 LangChain: Chat with search")
 
 openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+langsmith_api_key = st.sidebar.text_input("LangSmith API Key", type="password")
+
+if langsmith_api_key:
+    ls_client = Client(api_url="https://api.smith.langchain.com", api_key=langsmith_api_key)
 
 msgs = StreamlitChatMessageHistory()
 memory = ConversationBufferMemory(
@@ -20,9 +28,8 @@ if len(msgs.messages) == 0 or st.sidebar.button("Reset chat history"):
     msgs.add_ai_message("How can I help you?")
     st.session_state.steps = {}
 
-avatars = {"human": "user", "ai": "assistant"}
 for idx, msg in enumerate(msgs.messages):
-    with st.chat_message(avatars[msg.type]):
+    with st.chat_message(msg.type):
         # Render intermediate steps if any were saved
         for step in st.session_state.steps.get(str(idx), []):
             if step[0].tool == "_Exception":
@@ -31,6 +38,35 @@ for idx, msg in enumerate(msgs.messages):
                 st.write(step[0].log)
                 st.write(f"**{step[1]}**")
         st.write(msg.content)
+
+
+def render_message(text, meta):
+    # Re-draw any preview intermediate steps
+    for step in meta.get("intermediate_steps", []):
+        if step[0].tool == "_Exception":
+            continue
+        with st.expander(f"✅ **{step[0].tool}**: {step[0].tool_input}"):
+            st.write(step[0].log)
+            st.write(f"**{step[1]}**")
+
+    # Write the actual response
+    st.write(text)
+
+    # Add feedback input
+    if "run_id" in meta and langsmith_api_key:
+        run_id = meta["run_id"]
+        up, down, url = st.columns([1, 1, 12])
+        if up.button("👍", key=f"{run_id}_up"):
+            ls_client.create_feedback(run_id, "thumbs_up", score=True)
+        if down.button("👎", key=f"{run_id}_down"):
+            ls_client.create_feedback(run_id, "thumbs_down", score=True)
+        run_url = ls_client.read_run(run_id).url
+        url.markdown(f"""[View run in LangSmith]({run_url})""")
+
+
+for idx, msg in enumerate(msgs.messages):
+    with st.chat_message(msg["role"]):
+        render_message(msg.content, st.session_state.steps.get(str(idx), {}))
 
 if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?"):
     st.chat_message("user").write(prompt)
@@ -51,6 +87,10 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
     )
     with st.chat_message("assistant"):
         st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-        response = executor(prompt, callbacks=[st_cb])
+        response = executor(prompt, callbacks=[st_cb], include_run_info=True)
         st.write(response["output"])
-        st.session_state.steps[str(len(msgs.messages) - 1)] = response["intermediate_steps"]
+        response_meta = {"intermediate_steps": response["intermediate_steps"]}
+        if langsmith_api_key:
+            response_meta["run_id"] = response["__run"].run_id,
+        st.session_state.steps[str(len(msgs.messages) - 1)] = response_meta
+        render_message(response["output"], response_meta)
