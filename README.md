@@ -12,6 +12,7 @@ This repository contains reference implementations of various LangChain agents a
 - `chat_with_documents.py`: Chatbot capable of answering queries by referring custom documents ([View the app](https://langchain-document-chat.streamlit.app/))
 - `chat_with_sql_db.py`: Chatbot which can communicate with your database ([View the app](https://langchain-chat-sql.streamlit.app/))
 - `chat_pandas_df.py`: Chatbot to ask questions about a pandas DF ([View the app](https://langchain-chat-pandas.streamlit.app/))
+- `simple_feedback.py`: Add a simple LangSmith feedback integration (WIP!) ([View the app](https://langsmith-simple-feedback.streamlit.app/))
 
 Apps feature LangChain 🤝 Streamlit integrations such as the
 [Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit) and
@@ -37,7 +38,23 @@ $ pre-commit install
 $ streamlit run streamlit_agent/mrkl_demo.py
 ```
 
-# Running with Docker
+## LangSmith tracing and feedback
+
+All the examples provided here can integrate with LangSmith automatically, as described in the [Quick Start](https://docs.smith.langchain.com/#quick-start).
+Just add the following to your [`.streamlit/secrets.toml` file](https://docs.streamlit.io/library/advanced-features/secrets-management):
+
+```toml
+# .streamlit/secrets.toml
+
+LANGCHAIN_TRACING_V2 = "true"
+LANGCHAIN_ENDPOINT = "https://api.smith.langchain.com"
+LANGCHAIN_API_KEY = "<your-api-key>"
+LANGCHAIN_PROJECT = "<your-project>"  # if not specified, defaults to "default"
+```
+
+You can see a simple example of gathering human feedback and linking to run information in `streamlit_agent/simple_feedback.py`.
+
+## Running with Docker
 
 This project includes `Dockerfile` to run the app in Docker container. In order to optimise the Docker Image is optimised for size and building time with cache techniques.
 
