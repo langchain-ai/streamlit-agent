@@ -10,26 +10,6 @@ from langchain.agents.agent_toolkits import SQLDatabaseToolkit
 st.set_page_config(page_title="LangChain: Chat with SQL DB", page_icon="🦜")
 st.title("🦜 LangChain: Chat with SQL DB")
 
-
-@st.cache_resource(ttl="2h")
-def configure_sql_agent(db_uri):
-    llm = OpenAI(openai_api_key=openai_api_key, temperature=0, streaming=True)
-
-    db = SQLDatabase.from_uri(
-        database_uri=db_uri,
-    )
-
-    toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-
-    agent = create_sql_agent(
-        llm=llm,
-        toolkit=toolkit,
-        verbose=True,
-        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    )
-    return agent
-
-
 # User inputs
 radio_opt = ["Use sample database - Chinook.db", "Connect to your SQL database"]
 selected_opt = st.sidebar.radio(label="Choose suitable option", options=radio_opt)
@@ -44,7 +24,6 @@ else:
 openai_api_key = st.sidebar.text_input(
     label="OpenAI API Key",
     type="password",
-    value=st.session_state["openai_api_key"] if "openai_api_key" in st.session_state else "",
 )
 
 # Check user inputs
@@ -55,12 +34,26 @@ if not db_uri:
 if not openai_api_key:
     st.info("Please add your OpenAI API key to continue.")
     st.stop()
-else:
-    st.session_state["openai_api_key"] = openai_api_key
-
 
 # Setup agent
-agent = configure_sql_agent(db_uri)
+llm = OpenAI(openai_api_key=openai_api_key, temperature=0, streaming=True)
+
+
+@st.cache_resource(ttl="2h")
+def configure_db(db_uri):
+    return SQLDatabase.from_uri(database_uri=db_uri)
+
+
+db = configure_db(db_uri)
+
+toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+
+agent = create_sql_agent(
+    llm=llm,
+    toolkit=toolkit,
+    verbose=True,
+    agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+)
 
 if "messages" not in st.session_state or st.sidebar.button("Clear message history"):
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
