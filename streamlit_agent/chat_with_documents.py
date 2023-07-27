@@ -15,7 +15,7 @@ st.title("🦜 LangChain: Chat with Documents")
 
 
 @st.cache_resource(ttl="1h")
-def configure_qa_chain(uploaded_files):
+def configure_retriever(uploaded_files):
     # Read documents
     docs = []
     temp_dir = tempfile.TemporaryDirectory()
@@ -37,17 +37,7 @@ def configure_qa_chain(uploaded_files):
     # Define retriever
     retriever = vectordb.as_retriever(search_type="mmr", search_kwargs={"k": 2, "fetch_k": 4})
 
-    # Setup memory for contextual conversation
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
-
-    # Setup LLM and QA chain
-    llm = ChatOpenAI(
-        model_name="gpt-3.5-turbo", openai_api_key=openai_api_key, temperature=0, streaming=True
-    )
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm, retriever=retriever, memory=memory, verbose=True
-    )
-    return qa_chain
+    return retriever
 
 
 class StreamHandler(BaseCallbackHandler):
@@ -87,7 +77,18 @@ if not uploaded_files:
     st.info("Please upload PDF documents to continue.")
     st.stop()
 
-qa_chain = configure_qa_chain(uploaded_files)
+retriever = configure_retriever(uploaded_files)
+
+# Setup memory for contextual conversation
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# Setup LLM and QA chain
+llm = ChatOpenAI(
+    model_name="gpt-3.5-turbo", openai_api_key=openai_api_key, temperature=0, streaming=True
+)
+qa_chain = ConversationalRetrievalChain.from_llm(
+    llm, retriever=retriever, memory=memory, verbose=True
+)
 
 if "messages" not in st.session_state or st.sidebar.button("Clear message history"):
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
