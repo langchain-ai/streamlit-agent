@@ -10,10 +10,7 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 
-ENV HOST=0.0.0.0
-ENV LISTEN_PORT 8051
-EXPOSE 8051
-
+# A directory to have app data 
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./

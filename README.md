@@ -37,7 +37,7 @@ $ streamlit run streamlit_agent/mrkl_demo.py
 
 # Running with Docker
 
-This project includes `Dockerfile` to run the app in Docker container. In order to optimise the Docker Image is optimsed for size and building time with cache techniques.
+This project includes `Dockerfile` to run the app in Docker container. In order to optimise the Docker Image is optimised for size and building time with cache techniques.
 
 To generate Image with `DOCKER_BUILDKIT`, follow below command
 
