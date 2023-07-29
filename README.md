@@ -35,6 +35,24 @@ $ pre-commit install
 $ streamlit run streamlit_agent/mrkl_demo.py
 ```
 
+# Running with Docker
+
+This project includes `Dockerfile` to run the app in Docker container. In order to optimise the Docker Image is optimised for size and building time with cache techniques.
+
+To generate Image with `DOCKER_BUILDKIT`, follow below command
+
+```DOCKER_BUILDKIT=1 docker build --target=runtime . -t langchain-streamlit-agent:latest```
+
+1. Run the docker container directly 
+
+``docker run -d --name langchain-streamlit-agent -p 8051:8051 langchain-streamlit-agent:latest ``
+
+2. Run the docker container using docker-compose (Recommended)
+
+Edit the Command in `docker-compose` with target streamlit app
+
+``docker-compose up``
+
 ## Contributing
 
 We plan to add more agent and chain examples over time and improve the existing ones - PRs welcome! 🚀
