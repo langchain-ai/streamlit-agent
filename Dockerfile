@@ -28,4 +28,4 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 COPY ./streamlit_agent ./streamlit_agent
 
 
-CMD ["streamlit", "run", "streamlit_agent/chat_pandas_df.py", "--server.port", "8080"]
+CMD ["streamlit", "run", "streamlit_agent/chat_pandas_df.py", "--server.port", "8051"]
