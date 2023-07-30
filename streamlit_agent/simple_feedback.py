@@ -6,12 +6,21 @@ from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from langchain.tools import DuckDuckGoSearchRun
 from langsmith import Client
 import streamlit as st
+from st_feedback import st_feedback
 
 st.set_page_config(page_title="LangChain: Simple feedback", page_icon="🦜")
 st.title("🦜 LangChain: Simple feedback")
 
-openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
-langsmith_api_key = st.sidebar.text_input("LangSmith API Key", type="password")
+if "openai_api_key" in st.secrets:
+    openai_api_key = st.secrets.openai_api_key
+else:
+    openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
+
+if "LANGCHAIN_API_KEY" in st.secrets:
+    langsmith_api_key = st.secrets.LANGCHAIN_API_KEY
+else:
+    langsmith_api_key = st.sidebar.text_input("LangSmith API Key", type="password")
+
 ls_tracer = None
 if langsmith_api_key:
     project = st.sidebar.text_input("LangSmith Project", value="default")
@@ -26,18 +35,6 @@ if len(msgs.messages) == 0 or st.sidebar.button("Reset chat history"):
     msgs.clear()
     msgs.add_ai_message("How can I help you?")
     st.session_state.steps = {}
-
-for idx, msg in enumerate(msgs.messages):
-    with st.chat_message(msg.type):
-        # Render intermediate steps if any were saved
-        for step in st.session_state.steps.get(str(idx), []):
-            if step[0].tool == "_Exception":
-                continue
-            with st.expander(f"✅ **{step[0].tool}**: {step[0].tool_input}"):
-                st.write(step[0].log)
-                st.write(f"**{step[1]}**")
-        st.write(msg.content)
-
 
 def render_message(text, meta):
     # Re-draw any preview intermediate steps
@@ -54,20 +51,11 @@ def render_message(text, meta):
     # Add feedback input
     if "run_id" in meta and langsmith_api_key:
         run_id = meta["run_id"]
-        up, down, url = st.columns([1, 1, 12])
-        if up.button("👍", key=f"{run_id}_up"):
-            ls_client.create_feedback(run_id, "thumbs_up", score=True)
-        if down.button("👎", key=f"{run_id}_down"):
-            ls_client.create_feedback(run_id, "thumbs_down", score=True)
         run_url = ls_client.read_run(run_id).url
-        url.markdown(f"""[View run in LangSmith]({run_url})""")
+        st_feedback(ls_client, run_id, run_url, container=st.container())
 
-
-if "messages" not in st.session_state or st.sidebar.button("Reset conversation history"):
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
-
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
+for idx, msg in enumerate(msgs.messages):
+    with st.chat_message(msg.type):
         render_message(msg.content, st.session_state.steps.get(str(idx), {}))
 
 if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?"):
