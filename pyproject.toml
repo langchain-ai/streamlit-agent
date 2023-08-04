@@ -10,7 +10,7 @@ packages = [{include = "streamlit_agent"}]
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 streamlit = ">=1.25"
-langchain = {extras = ["docarray"], version = "^0.0.234"}
+langchain = ">=0.0.252"
 openai = "^0.27.8"
 duckduckgo-search = "^3.8.3"
 pypdf = "^3.12.2"
