@@ -11,11 +11,12 @@ st.title("📖 StreamlitChatMessageHistory")
 """
 A basic example of using StreamlitChatMessageHistory to help LLMChain remember messages in a conversation.
 The messages are stored in Session State across re-runs automatically. You can view the contents of Session State
-in the expander below. View the [source code for this app]().
+in the expander below. View the
+[source code for this app](https://github.com/langchain-ai/streamlit-agent/blob/main/streamlit_agent/basic_memory.py).
 """
 
 # Set up memory
-msgs = StreamlitChatMessageHistory(key="chat_messages")
+msgs = StreamlitChatMessageHistory(key="langchain_messages")
 memory = ConversationBufferMemory(chat_memory=msgs)
 if len(msgs.messages) == 0:
     msgs.add_ai_message("How can I help you?")
@@ -52,5 +53,14 @@ if prompt := st.chat_input():
     st.chat_message("ai").write(response)
 
 # Draw the messages at the end, so newly generated ones show up immediately
-view_messages.write("Contents of `st.session_state.chat_messages`:")
-view_messages.json(st.session_state.chat_messages)
+with view_messages:
+    """
+    Memory initialized with:
+    ```python
+    msgs = StreamlitChatMessageHistory(key="langchain_messages")
+    memory = ConversationBufferMemory(chat_memory=msgs)
+    ```
+
+    Contents of `st.session_state.langchain_messages`:
+    """
+    view_messages.json(st.session_state.langchain_messages)
