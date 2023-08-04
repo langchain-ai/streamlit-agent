@@ -5,6 +5,7 @@
 This repository contains reference implementations of various LangChain agents as Streamlit apps including:
 
 - `basic_streaming.py`: Simple streaming app with `langchain.chat_models.ChatOpenAI` ([View the app](https://langchain-streaming-example.streamlit.app/))
+- `basic_memory.py`: Simple app using `StreamlitChatMessageHistory` for LLM conversation memory ([View the app](https://langchain-st-memory.streamlit.app/))
 - `mrkl_demo.py`: An agent that replicates the [MRKL demo](https://python.langchain.com/docs/modules/agents/how_to/mrkl) ([View the app](https://langchain-mrkl.streamlit.app))
 - `minimal_agent.py`: A minimal agent with search (requires setting `OPENAI_API_KEY` env to run)
 - `search_and_chat.py`: A search-enabled chatbot that remembers chat history ([View the app](https://langchain-chat-search.streamlit.app/))
@@ -13,7 +14,8 @@ This repository contains reference implementations of various LangChain agents a
 - `chat_pandas_df.py`: Chatbot to ask questions about a pandas DF ([View the app](https://langchain-chat-pandas.streamlit.app/))
 
 Apps feature LangChain 🤝 Streamlit integrations such as the
-[Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit).
+[Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit) and
+[StreamlitChatMessageHistory](https://python.langchain.com/docs/integrations/memory/streamlit_chat_message_history).
 
 ## Setup
 
@@ -43,7 +45,7 @@ To generate Image with `DOCKER_BUILDKIT`, follow below command
 
 ```DOCKER_BUILDKIT=1 docker build --target=runtime . -t langchain-streamlit-agent:latest```
 
-1. Run the docker container directly 
+1. Run the docker container directly
 
 ``docker run -d --name langchain-streamlit-agent -p 8051:8051 langchain-streamlit-agent:latest ``
 
