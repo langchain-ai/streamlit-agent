@@ -6,7 +6,7 @@ from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from langchain.tools import DuckDuckGoSearchRun
 from langsmith import Client
 import streamlit as st
-from st_feedback import st_feedback
+from streamlit_feedback import streamlit_feedback
 
 st.set_page_config(page_title="LangChain: Simple feedback", page_icon="🦜")
 st.title("🦜 LangChain: Simple feedback")
@@ -36,10 +36,16 @@ if len(msgs.messages) == 0 or st.sidebar.button("Reset chat history"):
     msgs.add_ai_message("How can I help you?")
     st.session_state.steps = {}
 
-def render_message(text, meta):
+
+@st.cache_data(ttl="2h", show_spinner=False)
+def get_run_url(_client, run_id):
+    return _client.read_run(run_id).url
+
+
+def render_message(text, meta, skip_steps=False):
     # Re-draw any preview intermediate steps
     for step in meta.get("intermediate_steps", []):
-        if step[0].tool == "_Exception":
+        if step[0].tool == "_Exception" or skip_steps:
             continue
         with st.expander(f"✅ **{step[0].tool}**: {step[0].tool_input}"):
             st.write(step[0].log)
@@ -51,11 +57,27 @@ def render_message(text, meta):
     # Add feedback input
     if "run_id" in meta and langsmith_api_key:
         run_id = meta["run_id"]
-        run_url = ls_client.read_run(run_id).url
-        st_feedback(ls_client, run_id, run_url, container=st.container())
+        left, right = st.columns([8, 1])
+        with left:
+            feedback = streamlit_feedback(
+                feedback_type="thumbs",
+                optional_text_label="[Optional] Please provide an explanation",
+                key=f"feedback_{run_id}",
+            )
+        run_url = get_run_url(ls_client, run_id)
+        right.markdown(f"[View run]({run_url})")
+        if feedback:
+            ls_client.create_feedback(
+                run_id,
+                feedback["type"],
+                value=feedback["score"],
+                comment=feedback.get("text", None),
+            )
 
+
+avatars = {"human": "user", "ai": "assistant"}
 for idx, msg in enumerate(msgs.messages):
-    with st.chat_message(msg.type):
+    with st.chat_message(avatars[msg.type]):
         render_message(msg.content, st.session_state.steps.get(str(idx), {}))
 
 if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?"):
@@ -78,11 +100,10 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
     with st.chat_message("assistant"):
         callbacks = [StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)]
         if ls_tracer:
-                    callbacks.append(ls_tracer)
+            callbacks.append(ls_tracer)
         response = executor(prompt, callbacks=callbacks, include_run_info=True)
-        st.write(response["output"])
         response_meta = {"intermediate_steps": response["intermediate_steps"]}
         if langsmith_api_key:
-            response_meta["run_id"] = response["__run"].run_id,
+            response_meta["run_id"] = response["__run"].run_id
         st.session_state.steps[str(len(msgs.messages) - 1)] = response_meta
-        render_message(response["output"], response_meta)
+        render_message(response["output"], response_meta, skip_steps=True)
