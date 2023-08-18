@@ -6,9 +6,11 @@ from langchain import SQLDatabase
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.chains import LLMMathChain, SQLDatabaseChain
+from langchain.chains import LLMMathChain
 from langchain.llms import OpenAI
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
+
+from langchain_experimental.sql import SQLDatabaseChain
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
 from streamlit_agent.clear_results import with_clear_container
@@ -21,6 +23,8 @@ SAVED_SESSIONS = {
     "'The Storm Before the Calm' and are they in the FooBar database? If so, what albums of theirs "
     "are in the FooBar database?": "alanis.pickle",
 }
+
+print("Hello!")
 
 st.set_page_config(
     page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed"
