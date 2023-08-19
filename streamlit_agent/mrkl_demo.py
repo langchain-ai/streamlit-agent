@@ -24,8 +24,6 @@ SAVED_SESSIONS = {
     "are in the FooBar database?": "alanis.pickle",
 }
 
-print("Hello!")
-
 st.set_page_config(
     page_title="MRKL", page_icon="🦜", layout="wide", initial_sidebar_state="collapsed"
 )
