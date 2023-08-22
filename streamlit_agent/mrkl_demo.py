@@ -6,9 +6,10 @@ from langchain import SQLDatabase
 from langchain.agents import AgentType
 from langchain.agents import initialize_agent, Tool
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.chains import LLMMathChain, SQLDatabaseChain
+from langchain.chains import LLMMathChain
 from langchain.llms import OpenAI
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
+from langchain_experimental.sql import SQLDatabaseChain
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
 from streamlit_agent.clear_results import with_clear_container
