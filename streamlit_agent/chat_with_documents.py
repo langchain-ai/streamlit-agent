@@ -53,17 +53,18 @@ class StreamHandler(BaseCallbackHandler):
 
 class PrintRetrievalHandler(BaseCallbackHandler):
     def __init__(self, container):
-        self.container = container.expander("Context Retrieval")
+        self.status = container.status("**Context Retrieval**")
 
     def on_retriever_start(self, query: str, **kwargs):
-        self.container.write(f"**Question:** {query}")
+        self.status.write(f"**Question:** {query}")
+        self.status.update(label=f"**Context Retrieval:** {query}")
 
     def on_retriever_end(self, documents, **kwargs):
-        # self.container.write(documents)
         for idx, doc in enumerate(documents):
             source = os.path.basename(doc.metadata["source"])
-            self.container.write(f"**Document {idx} from {source}**")
-            self.container.markdown(doc.page_content)
+            self.status.write(f"**Document {idx} from {source}**")
+            self.status.markdown(doc.page_content)
+        self.status.update(state="complete")
 
 
 openai_api_key = st.sidebar.text_input("OpenAI API Key", type="password")
