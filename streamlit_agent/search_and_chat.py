@@ -27,9 +27,9 @@ for idx, msg in enumerate(msgs.messages):
         for step in st.session_state.steps.get(str(idx), []):
             if step[0].tool == "_Exception":
                 continue
-            with st.expander(f"✅ **{step[0].tool}**: {step[0].tool_input}"):
+            with st.status(f"**{step[0].tool}**: {step[0].tool_input}", state="complete"):
                 st.write(step[0].log)
-                st.write(f"**{step[1]}**")
+                st.write(step[1])
         st.write(msg.content)
 
 if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?"):
