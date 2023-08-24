@@ -12,7 +12,8 @@ This repository contains reference implementations of various LangChain agents a
 - `simple_feedback.py`: A chat app that allows the user to add feedback on responses using [streamlit-feedback](https://github.com/trubrics/streamlit-feedback), and link to the traces in [LangSmith](https://docs.smith.langchain.com/) ([View the app](https://langsmith-simple-feedback.streamlit.app/))
 - `chat_with_documents.py`: Chatbot capable of answering queries by referring custom documents ([View the app](https://langchain-document-chat.streamlit.app/))
 - `chat_with_sql_db.py`: Chatbot which can communicate with your database ([View the app](https://langchain-chat-sql.streamlit.app/))
-- `chat_pandas_df.py`: Chatbot to ask questions about a pandas DF ([View the app](https://langchain-chat-pandas.streamlit.app/))
+- `chat_pandas_df.py`: Chatbot to ask questions about a pandas DF (Note: uses `PythonAstREPLTool` which is vulnerable to arbitrary code execution,
+  see [langchain #7700](https://github.com/langchain-ai/langchain/issues/7700))
 
 Apps feature LangChain 🤝 Streamlit integrations such as the
 [Callback integration](https://python.langchain.com/docs/modules/callbacks/integrations/streamlit) and

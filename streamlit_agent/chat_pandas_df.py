@@ -47,6 +47,11 @@ uploaded_file = st.file_uploader(
     on_change=clear_submit,
 )
 
+if not uploaded_file:
+    st.warning(
+        "This app uses LangChain's `PythonAstREPLTool` which is vulnerable to arbitrary code execution. Please use caution in deploying and sharing this app."
+    )
+
 if uploaded_file:
     df = load_data(uploaded_file)
 
