@@ -55,7 +55,7 @@ class PrintRetrievalHandler(BaseCallbackHandler):
     def __init__(self, container):
         self.status = container.status("**Context Retrieval**")
 
-    def on_retriever_start(self, query: str, **kwargs):
+    def on_retriever_start(self, serialized: dict, query: str, **kwargs):
         self.status.write(f"**Question:** {query}")
         self.status.update(label=f"**Context Retrieval:** {query}")
 
