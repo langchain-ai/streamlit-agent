@@ -677,21 +677,19 @@ files = [
 
 [[package]]
 name = "docarray"
-version = "0.32.1"
+version = "0.38.0"
 description = "The data structure for multimodal data"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "docarray-0.32.1-py3-none-any.whl", hash = "sha256:abd6d8999f44fd37b0c1d54f7cedd9007ab13b8b6c69933a9d30abbd0cbad5cd"},
-    {file = "docarray-0.32.1.tar.gz", hash = "sha256:ef349d2501d5cb0f205497e5e7de5b5d034965bdad98cf6daab1baa6aa3e39d2"},
+    {file = "docarray-0.38.0-py3-none-any.whl", hash = "sha256:7aa13f003365396897349137a285c23743841f6e10182b764e1a8d432815f153"},
+    {file = "docarray-0.38.0.tar.gz", hash = "sha256:18ca63ca0e4df0982fe260f4121a68ace2c83152e77af9fd47905ff898816bf0"},
 ]
 
 [package.dependencies]
-hnswlib = {version = ">=0.6.2", optional = true, markers = "extra == \"hnswlib\""}
 numpy = ">=1.17.3"
 orjson = ">=3.8.2"
-protobuf = {version = ">=3.19.0", optional = true, markers = "extra == \"proto\" or extra == \"hnswlib\" or extra == \"full\""}
-pydantic = ">=1.10.2"
+pydantic = ">=1.10.2,<2.0.0"
 rich = ">=13.1.0"
 types-requests = ">=2.28.11.6"
 typing-inspect = ">=0.8.0"
@@ -700,17 +698,20 @@ typing-inspect = ">=0.8.0"
 audio = ["pydub (>=0.25.1,<0.26.0)"]
 aws = ["smart-open[s3] (>=6.3.0)"]
 elasticsearch = ["elastic-transport (>=8.4.0,<9.0.0)", "elasticsearch (>=7.10.1)"]
-full = ["av (>=10.0.0)", "lz4 (>=1.0.0)", "pandas (>=1.1.0)", "pillow (>=9.3.0)", "protobuf (>=3.19.0)", "pydub (>=0.25.1,<0.26.0)", "trimesh[easy] (>=3.17.1)", "types-pillow (>=9.3.0.1)"]
-hnswlib = ["hnswlib (>=0.6.2)", "protobuf (>=3.19.0)"]
+full = ["av (>=10.0.0)", "jax (>=0.4.10)", "lz4 (>=1.0.0)", "pandas (>=1.1.0)", "pillow (>=9.3.0)", "protobuf (>=3.20.0)", "pydub (>=0.25.1,<0.26.0)", "trimesh[easy] (>=3.17.1)", "types-pillow (>=9.3.0.1)"]
+hnswlib = ["hnswlib (>=0.7.0)", "protobuf (>=3.20.0)"]
 image = ["pillow (>=9.3.0)", "types-pillow (>=9.3.0.1)"]
 jac = ["jina-hubble-sdk (>=0.34.0)"]
+jax = ["jax (>=0.4.10)"]
 mesh = ["trimesh[easy] (>=3.17.1)"]
+milvus = ["pymilvus (>=2.2.12,<3.0.0)"]
 pandas = ["pandas (>=1.1.0)"]
-proto = ["lz4 (>=1.0.0)", "protobuf (>=3.19.0)"]
+proto = ["lz4 (>=1.0.0)", "protobuf (>=3.20.0)"]
 qdrant = ["qdrant-client (>=1.1.4)"]
+redis = ["redis (>=4.6.0,<5.0.0)"]
 torch = ["torch (>=1.0.0)"]
 video = ["av (>=10.0.0)"]
-weaviate = ["weaviate-client (>=3.15)"]
+weaviate = ["weaviate-client (>=3.17,<3.18)"]
 web = ["fastapi (>=0.87.0)"]
 
 [[package]]
@@ -1233,7 +1234,6 @@ files = [
 aiohttp = ">=3.8.3,<4.0.0"
 async-timeout = {version = ">=4.0.0,<5.0.0", markers = "python_version < \"3.11\""}
 dataclasses-json = ">=0.5.7,<0.6.0"
-docarray = {version = ">=0.32.0,<0.33.0", extras = ["hnswlib"], optional = true, markers = "extra == \"docarray\" or extra == \"all\""}
 langsmith = ">=0.0.21,<0.1.0"
 numexpr = ">=2.8.4,<3.0.0"
 numpy = ">=1,<2"
@@ -3901,4 +3901,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<4.0"
-content-hash = "2ce4767aa9589bc49344481b234a799927e1fdb3653a0a660a83dbfe0e2e9d4b"
+content-hash = "53516562055d56da19caa612888302112845b0d2c2c272a7220d2a43b5d7968d"
