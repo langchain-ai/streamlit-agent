@@ -1,8 +1,8 @@
 from langchain.chains import LLMChain
-from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
 from langchain.prompts import PromptTemplate
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
+from langchain_openai import OpenAI
 import streamlit as st
 
 st.set_page_config(page_title="StreamlitChatMessageHistory", page_icon="📖")
@@ -49,8 +49,8 @@ for msg in msgs.messages:
 if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
     # Note: new messages are saved to history automatically by Langchain during run
-    response = llm_chain.run(prompt)
-    st.chat_message("ai").write(response)
+    response = llm_chain.invoke(prompt)
+    st.chat_message("ai").write(response["text"])
 
 # Draw the messages at the end, so newly generated ones show up immediately
 with view_messages:

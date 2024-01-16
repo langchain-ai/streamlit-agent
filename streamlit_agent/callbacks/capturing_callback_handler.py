@@ -92,7 +92,7 @@ def playback_callbacks(
     # Return the agent's result
     for record in records:
         if record["callback_type"] == CallbackType.ON_AGENT_FINISH:
-            return record["args"][0][0]["output"]
+            return record["args"][0].return_values
 
     return "[Missing Agent Result]"
 
@@ -107,16 +107,12 @@ class CapturingCallbackHandler(BaseCallbackHandler):
         with open(path, "wb") as file:
             pickle.dump(self._records, file)
 
-    def _append_record(
-        self, type: str, args: tuple[Any, ...], kwargs: dict[str, Any]
-    ) -> None:
+    def _append_record(self, type: str, args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
         time_now = time.time()
         time_delta = time_now - self._last_time if self._last_time is not None else 0
         self._last_time = time_now
         self._records.append(
-            CallbackRecord(
-                callback_type=type, args=args, kwargs=kwargs, time_delta=time_delta
-            )
+            CallbackRecord(callback_type=type, args=args, kwargs=kwargs, time_delta=time_delta)
         )
 
     def on_llm_start(self, *args: Any, **kwargs: Any) -> None:

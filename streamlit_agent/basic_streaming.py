@@ -1,6 +1,6 @@
 from langchain.callbacks.base import BaseCallbackHandler
-from langchain.chat_models import ChatOpenAI
 from langchain.schema import ChatMessage
+from langchain_openai import ChatOpenAI
 import streamlit as st
 
 
@@ -34,5 +34,5 @@ if prompt := st.chat_input():
     with st.chat_message("assistant"):
         stream_handler = StreamHandler(st.empty())
         llm = ChatOpenAI(openai_api_key=openai_api_key, streaming=True, callbacks=[stream_handler])
-        response = llm(st.session_state.messages)
+        response = llm.invoke(st.session_state.messages)
         st.session_state.messages.append(ChatMessage(role="assistant", content=response.content))

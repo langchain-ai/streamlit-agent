@@ -1,9 +1,11 @@
 from langchain.agents import ConversationalChatAgent, AgentExecutor
-from langchain.callbacks import StreamlitCallbackHandler
-from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.memory.chat_message_histories import StreamlitChatMessageHistory
-from langchain.tools import DuckDuckGoSearchRun
+from langchain_community.callbacks import StreamlitCallbackHandler
+from langchain_community.chat_message_histories import StreamlitChatMessageHistory
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_core.runnables import RunnableConfig
+from langchain_openai import ChatOpenAI
+
 import streamlit as st
 
 st.set_page_config(page_title="LangChain: Chat with search", page_icon="🦜")
@@ -51,6 +53,8 @@ if prompt := st.chat_input(placeholder="Who won the Women's U.S. Open in 2018?")
     )
     with st.chat_message("assistant"):
         st_cb = StreamlitCallbackHandler(st.container(), expand_new_thoughts=False)
-        response = executor(prompt, callbacks=[st_cb])
+        cfg = RunnableConfig()
+        cfg["callbacks"] = [st_cb]
+        response = executor.invoke(prompt, cfg)
         st.write(response["output"])
         st.session_state.steps[str(len(msgs.messages) - 1)] = response["intermediate_steps"]
