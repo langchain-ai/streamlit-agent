@@ -1,8 +1,8 @@
-from langchain.chains import LLMChain
-from langchain.memory import ConversationBufferMemory
-from langchain.prompts import PromptTemplate
 from langchain_community.chat_message_histories import StreamlitChatMessageHistory
-from langchain_openai import OpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
+
 import streamlit as st
 
 st.set_page_config(page_title="StreamlitChatMessageHistory", page_icon="📖")
@@ -17,7 +17,6 @@ in the expander below. View the
 
 # Set up memory
 msgs = StreamlitChatMessageHistory(key="langchain_messages")
-memory = ConversationBufferMemory(chat_memory=msgs)
 if len(msgs.messages) == 0:
     msgs.add_ai_message("How can I help you?")
 
@@ -32,14 +31,23 @@ if not openai_api_key:
     st.info("Enter an OpenAI API Key to continue")
     st.stop()
 
-# Set up the LLMChain, passing in memory
-template = """You are an AI chatbot having a conversation with a human.
+# Set up the LangChain, passing in Message History
 
-{history}
-Human: {human_input}
-AI: """
-prompt = PromptTemplate(input_variables=["history", "human_input"], template=template)
-llm_chain = LLMChain(llm=OpenAI(openai_api_key=openai_api_key), prompt=prompt, memory=memory)
+prompt = ChatPromptTemplate.from_messages(
+    [
+        ("system", "You are an AI chatbot having a conversation with a human."),
+        MessagesPlaceholder(variable_name="history"),
+        ("human", "{question}"),
+    ]
+)
+
+chain = prompt | ChatOpenAI(api_key=openai_api_key)
+chain_with_history = RunnableWithMessageHistory(
+    chain,
+    lambda session_id: msgs,
+    input_messages_key="question",
+    history_messages_key="history",
+)
 
 # Render current messages from StreamlitChatMessageHistory
 for msg in msgs.messages:
@@ -49,16 +57,16 @@ for msg in msgs.messages:
 if prompt := st.chat_input():
     st.chat_message("human").write(prompt)
     # Note: new messages are saved to history automatically by Langchain during run
-    response = llm_chain.invoke(prompt)
-    st.chat_message("ai").write(response["text"])
+    config = {"configurable": {"session_id": "any"}}
+    response = chain_with_history.invoke({"question": prompt}, config)
+    st.chat_message("ai").write(response.content)
 
 # Draw the messages at the end, so newly generated ones show up immediately
 with view_messages:
     """
-    Memory initialized with:
+    Message History initialized with:
     ```python
     msgs = StreamlitChatMessageHistory(key="langchain_messages")
-    memory = ConversationBufferMemory(chat_memory=msgs)
     ```
 
     Contents of `st.session_state.langchain_messages`:
