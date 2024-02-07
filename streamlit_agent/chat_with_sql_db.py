@@ -6,20 +6,28 @@ from langchain.sql_database import SQLDatabase
 from langchain.agents.agent_types import AgentType
 from langchain.callbacks import StreamlitCallbackHandler
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
+from sqlalchemy import create_engine
+import sqlite3
 
 st.set_page_config(page_title="LangChain: Chat with SQL DB", page_icon="🦜")
 st.title("🦜 LangChain: Chat with SQL DB")
+
+INJECTION_WARNING = """
+                    SQL agent can be vulnerable to prompt injection. Use a DB role with limited permissions.
+                    Read more [here](https://python.langchain.com/docs/security).
+                    """
+LOCALDB = "USE_LOCALDB"
 
 # User inputs
 radio_opt = ["Use sample database - Chinook.db", "Connect to your SQL database"]
 selected_opt = st.sidebar.radio(label="Choose suitable option", options=radio_opt)
 if radio_opt.index(selected_opt) == 1:
+    st.sidebar.warning(INJECTION_WARNING, icon="⚠️")
     db_uri = st.sidebar.text_input(
         label="Database URI", placeholder="mysql://user:pass@hostname:port/db"
     )
 else:
-    db_filepath = (Path(__file__).parent / "Chinook.db").absolute()
-    db_uri = f"sqlite:////{db_filepath}"
+    db_uri = LOCALDB
 
 openai_api_key = st.sidebar.text_input(
     label="OpenAI API Key",
@@ -41,6 +49,12 @@ llm = OpenAI(openai_api_key=openai_api_key, temperature=0, streaming=True)
 
 @st.cache_resource(ttl="2h")
 def configure_db(db_uri):
+    if db_uri == LOCALDB:
+        # Make the DB connection read-only to reduce risk of injection attacks
+        # See: https://python.langchain.com/docs/security
+        db_filepath = (Path(__file__).parent / "Chinook.db").absolute()
+        creator = lambda: sqlite3.connect(f"file:{db_filepath}?mode=ro", uri=True)
+        return SQLDatabase(create_engine("sqlite:///", creator=creator))
     return SQLDatabase.from_uri(database_uri=db_uri)
 
 
