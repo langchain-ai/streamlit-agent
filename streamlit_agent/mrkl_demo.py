@@ -10,6 +10,8 @@ from langchain_community.utilities import DuckDuckGoSearchAPIWrapper, SQLDatabas
 from langchain_core.runnables import RunnableConfig
 from langchain_experimental.sql import SQLDatabaseChain
 from langchain_openai import OpenAI
+from sqlalchemy import create_engine
+import sqlite3
 
 from streamlit_agent.callbacks.capturing_callback_handler import playback_callbacks
 from streamlit_agent.clear_results import with_clear_container
@@ -45,7 +47,12 @@ else:
 llm = OpenAI(temperature=0, openai_api_key=openai_api_key, streaming=True)
 search = DuckDuckGoSearchAPIWrapper()
 llm_math_chain = LLMMathChain.from_llm(llm)
-db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
+
+# Make the DB connection read-only to reduce risk of injection attacks
+# See: https://python.langchain.com/docs/security
+creator = lambda: sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+db = SQLDatabase(create_engine("sqlite:///", creator=creator))
+
 db_chain = SQLDatabaseChain.from_llm(llm, db)
 tools = [
     Tool(
