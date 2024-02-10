@@ -79,7 +79,7 @@ if prompt := st.chat_input(placeholder="What is this data about?"):
         df,
         verbose=True,
         agent_type=AgentType.OPENAI_FUNCTIONS,
-        handle_parsing_errors=True,
+        agent_executor_kwargs={"handle_parsing_errors": True},
     )
 
     with st.chat_message("assistant"):
